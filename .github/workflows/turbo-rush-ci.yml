@@ -1,0 +1,55 @@
+name: Turbo Rush CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  godot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: sudo apt-get update && sudo apt-get install -y unzip curl
+
+      - name: Download Godot 4.7.2
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/godot
+          curl -L --fail --retry 3 -o /tmp/godot/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip"
+          unzip -q /tmp/godot/godot.zip -d /tmp/godot
+          chmod +x /tmp/godot/Godot_v4.7.2-stable_linux.x86_64
+          echo "GODOT_BIN=/tmp/godot/Godot_v4.7.2-stable_linux.x86_64" >> "$GITHUB_ENV"
+
+      - name: Headless import (script error gate)
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --path . --editor --quit 2>&1 | tee /tmp/import.log
+          if grep -qE 'SCRIPT ERROR:|Parse Error:|Failed to load script' /tmp/import.log; then
+            echo "Godot import detected script errors."
+            exit 1
+          fi
+
+      - name: Smoke tests (10,000-level determinism + catalog)
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --path . --script res://tests/smoke_test.gd
+
+      - name: Integration test (boot + full race flow)
+        run: |
+          set -euo pipefail
+          "$GODOT_BIN" --headless --path . --script res://tests/integration_test.gd
+
+      - name: Monetization preflight (informational)
+        continue-on-error: true
+        run: |
+          "$GODOT_BIN" --headless --path . --script res://tools/monetization_preflight.gd || \
+            echo "::warning::Monetization identifiers are not configured yet."

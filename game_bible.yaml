@@ -1,0 +1,68 @@
+schema_version: 1
+project_id: GME-2026-0003
+title: "Turbo Rush"
+genre: "Mobile 3D Arcade Racing"
+platforms: [android, ios]
+engine: "Godot 4.7.2"
+renderer: "mobile"
+orientation: "landscape"
+connectivity: "offline_first"
+player_count: 1
+ai_opponents: 5
+race_mode: "finite level-based"
+target_race_seconds:
+  standard: [120, 170]
+  sprint: [85, 115]
+  endurance: [175, 215]
+  elite: [130, 180]
+progression:
+  next_level_unlock_position_max: 5
+  assist_after_failures: 2
+  car_count: 54
+  wheel_count: 60
+  skin_count: 54
+  card_count: 48
+  upgrade_levels: 10
+economy:
+  currencies: [coins, diamonds]
+  revive_diamonds: 5
+  rank_reward_deterministic: true
+  random_chest: true
+  random_bonus: true
+  star_milestones: [30, 100, 250, 500, 1000]
+procedural:
+  deterministic_by_level: true
+  seed_rule: "64-bit hash(level_number + game_salt)"
+  required_modules: [start_straight, straight, gentle_curve, medium_curve, tight_curve, hairpin, chicane, narrow_gate, jump, boost_lane, traffic_zone, finish_straight]
+save:
+  mode: local_json
+  checksum: sha256
+  backup: true
+  migration: required
+monetization:
+  startup_banners:
+    enabled_when_online_and_consented: true
+    ad_unit: Banner_Android
+    instances: [top, bottom]
+    visible_window: "logo/loading only; hidden before lobby"
+  rewarded_ads: [revive, daily_task_reward, double_coins, bonus_coins]
+  daily_task_reward:
+    ad_opportunities_per_day: 3
+    reward_bias: "coins_first; diamonds_uncommon"
+    reward_pool:
+      coins: [80, 120, 180, 250, 400]
+      diamonds: [1, 2, 3]
+  interstitial: "results_to_menu only; max once per 5 minutes; first 10 minutes disabled"
+  iap_products: [starter_garage, racer_bundle, pro_garage, skin_vault_01, skin_vault_02, card_vault_01, card_vault_02, mega_rush, ultimate_garage, remove_ads]
+  content_catalog: {skins: 54, cards: 48}
+  paid_content_is_fixed: true
+  paid_random_loot: false
+  duplicate_skin_compensation_coins: 250
+  duplicate_card_compensation_coins: 120
+  pay_to_win: false
+release:
+  requires_build: true
+  requires_tests: true
+  requires_security_scan: true
+  requires_compliance_audit: true
+  no_secrets_in_client: true

@@ -1,0 +1,36 @@
+// Turbo Rush — Aptoide Connect billing bridge module (SCAFFOLDING, not built here).
+//
+// Build with the Godot 4.7.2 Android build template so `godot-lib` is available.
+// The resulting AAR is added in Godot: Project -> Export -> Android -> Plugins.
+
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'com.vermajeeverma.turborush.aptoide'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 23
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+    // Copy godot-lib.<version>.stable.release.aar from the Godot Android build
+    // template into ./libs before building.
+    compileOnly files('libs/godot-lib.4.7.2.stable.release.aar')
+
+    // TODO: add the Aptoide Connect / Billing SDK dependency here, using the
+    // exact artifact + version from your Aptoide Billing Integration setup.
+    // implementation 'com.aptoide:billing:<version>'
+}
